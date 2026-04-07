@@ -58,3 +58,33 @@ BEGIN
 	RAISE NOTICE '%', resultado;
 END;
 $$
+
+--Enunciado 5 Limpeza de valores NULL
+
+DO $$
+DECLARE
+cur_delete REFCURSOR;
+tupla RECORD;
+BEGIN
+OPEN cur_delete SCROLL FOR
+SELECT
+*
+FROM
+tb_titanic;
+LOOP
+FETCH cur_delete INTO tupla;
+EXIT WHEN NOT FOUND;
+IF tupla.cabin IS NULL THEN
+RAISE NOTICE '%', tupla.cabin;
+DELETE FROM tb_titanic WHERE CURRENT OF cur_delete;
+END IF;
+END LOOP;
+
+LOOP
+FETCH BACKWARD FROM cur_delete INTO tupla;
+EXIT WHEN NOT FOUND;
+RAISE NOTICE '%', tupla;
+END LOOP;
+CLOSE cur_delete;
+END;
+$$
