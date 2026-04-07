@@ -29,3 +29,32 @@ BEGIN
 	CLOSE cur_titanic;
 END;
 $$
+
+/* Enunciado 4 - Tarifa versus embarque
+Dentre os passageiros que pagaram tarifa (Fare) maior que 50, quantos embarcaram em
+Cherbourg (Embarked = 'C')? Escreva um cursor vinculado que exiba esse valor. */
+
+DO $$
+DECLARE
+	--Declaracao
+	cur_titanic CURSOR FOR 
+	SELECT fare, embarked FROM tb_titanic ;
+	tupla RECORD;
+	resultado INT := 0;
+BEGIN
+	--Abertura
+	OPEN cur_titanic;
+	--Recuperacao
+	FETCH cur_titanic INTO tupla;
+	WHILE FOUND
+	LOOP
+        IF tupla.fare > 50 AND tupla.embarked = 'C' THEN
+            resultado := resultado + 1;
+        END IF;
+		FETCH cur_titanic INTO tupla;
+	END LOOP;
+	--Fechamento
+	CLOSE cur_titanic;
+	RAISE NOTICE '%', resultado;
+END;
+$$
