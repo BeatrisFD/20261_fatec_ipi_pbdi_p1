@@ -88,3 +88,43 @@ END LOOP;
 CLOSE cur_delete;
 END;
 $$
+
+
+
+--Enunciado 2 - Sobrevivência em função da classe social
+DO $$
+DECLARE
+
+cur_nomes_passageiro REFCURSOR;
+v_classe INT := 1;
+v_survived VARCHAR(200);
+v_nome_tabela VARCHAR(200) := 'tb_titanic';
+contador INT := 0;
+BEGIN
+
+OPEN cur_nomes_passageiro FOR EXECUTE
+format
+(
+'
+SELECT
+Survived
+FROM
+%s
+WHERE pclass = $1
+'
+,
+v_nome_tabela
+)USING v_classe;
+LOOP
+FETCH cur_nomes_passageiro INTO v_survived;
+EXIT WHEN NOT FOUND;
+RAISE NOTICE '%', v_survived;
+IF v_classe = 1 THEN
+    contador := contador +1;
+END IF;
+END LOOP;
+RAISE NOTICE 'Numero: %', contador;
+CLOSE cur_nomes_passageiro;
+
+END;
+$$
